@@ -22,6 +22,7 @@ class Scheduler
           Scheduler(const std::string&, const int, const int);
           void ReadInput(const std::string&);
           void PrintInput();
+          void Simulate(const std::string&);
 };
  
 #endif

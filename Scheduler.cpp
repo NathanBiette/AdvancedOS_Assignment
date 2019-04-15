@@ -14,16 +14,11 @@ void Scheduler::ReadInput(const string &filename){
     ifstream myfile;
     myfile.open(filename);
     arrivals.resize(numArrivals);
-    //stringstream ss;
-    int found;
     if (myfile.is_open()){
         for (int i = 0; i < numArrivals; i++){
             getline(myfile,line);
             stringstream ss;
             ss << line;
-            //string test;
-            //ss >> test;
-            //cout<<test<<endl;
             ss >> arrivals[i].processId;
             ss >> arrivals[i].arrivalTime;
             ss >> arrivals[i].burst;
@@ -40,4 +35,20 @@ void Scheduler::PrintInput(){
         cout<<arrivals[i].arrivalTime<<" ";
         cout<<arrivals[i].burst<<endl;
     }
+    return;
+}
+
+void Scheduler::Simulate(const string &filename){
+    ofstream myfile;
+    myfile.open(filename, ios::trunc | ios::out);
+    if (myfile.is_open()){
+        for(int i = 0; i < numArrivals; i++){
+        
+        }
+        myfile << "This is a line.\n";
+        myfile << "This is NOT line.\n";
+        myfile.close();
+    }
+    else cout << "Unable to open file";
+    myfile.close();
 }
