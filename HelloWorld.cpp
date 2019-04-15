@@ -8,6 +8,7 @@ using namespace std;
 int main()
 {
     cout << "Hello, World!" << endl;
-    Scheduler scheduler(mystr, 5, 6);
+    Scheduler scheduler(mystr, 5, 5);
+    scheduler.PrintInput();
     return 0;
 }

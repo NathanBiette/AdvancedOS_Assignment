@@ -21,6 +21,7 @@ class Scheduler
      public :
           Scheduler(const std::string&, const int, const int);
           void ReadInput(const std::string&);
+          void PrintInput();
 };
  
 #endif
