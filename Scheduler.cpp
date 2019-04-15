@@ -1,13 +1,14 @@
 #include <iostream>
+#include <fstream>
 #include "Scheduler.h"
 using namespace std;
 
-Scheduler::Scheduler(const std::string &s){
+Scheduler::Scheduler(const string &s, int numProcesses, int numArrivals): numProcesses(numProcesses), numArrivals(numArrivals){
     ReadInput(s);
 }
 
-void ReadInput(const std::string &filename){
-string line;
+void Scheduler::ReadInput(const string &filename){
+    string line;
     ifstream myfile;
     myfile.open(filename);
     if (myfile.is_open()){
