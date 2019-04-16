@@ -31,11 +31,29 @@ void Scheduler::TimeStep(){
     cout<<"time is now "<<time<<endl;
 }
 
-Scheduler::Scheduler(const string &s, int numProcesses, int numArrivals): numProcesses(numProcesses), numArrivals(numArrivals){
+int Scheduler::Event(string& str){
+        if(!arrivals.empty() && arrivals.front().arrivalTime == time){
+            job newJob = {arrivals.front().processId, arrivals.front().burst};
+            readyQ.push(newJob);
+            arrivals.pop();
+        }
+        if(!readyQ.empty() && executingJob.remainingTime <= 0){
+            executingJob = readyQ.front();
+            readyQ.pop();
+            stringstream ss;
+            ss << "(" << time << ", " << executingJob.processId << ")\n";
+            str = ss.str();
+            return 1;
+            //myfile << "(" << time << ", " << executingJob.processId << ")\n";
+        }
+        return 0;
+}
+
+Scheduler::Scheduler(const string& s, int numProcesses, int numArrivals): numProcesses(numProcesses), numArrivals(numArrivals){
     ReadInput(s);
 }
 
-void Scheduler::ReadInput(const string &filename){
+void Scheduler::ReadInput(const string& filename){
     string line;
     ifstream myfile;
     myfile.open(filename);
@@ -73,28 +91,15 @@ void Scheduler::Simulate(const string &filename){
     ofstream myfile;
     myfile.open(filename, ios::trunc | ios::out);
     if (myfile.is_open() && arrivals.size() > 0){
-
         time = 0;
-        cout<<"time is now "<<time<<endl;
-        executingJob = {arrivals.front().processId, arrivals.front().burst};
-        arrivals.pop();
-        myfile << "(" << time << ", " << executingJob.processId << ")\n";
-        Scheduler::TimeStep();
         // Iterate over the time steps
-        while(!arrivals.empty() || !readyQ.empty()){
-            
-            if(!arrivals.empty() && arrivals.front().arrivalTime == time){
-                job newJob = {arrivals.front().processId, arrivals.front().burst};
-                readyQ.push(newJob);
-                arrivals.pop();
-            }
-            if(!readyQ.empty() && executingJob.remainingTime <= 0){
-                executingJob = readyQ.front();
-                readyQ.pop();
-                myfile << "(" << time << ", " << executingJob.processId << ")\n";
+        do{
+            string str;
+            if(Scheduler::Event(str)){
+                myfile << str;
             }
             Scheduler::TimeStep();
-        }
+        }while(!arrivals.empty() || !readyQ.empty());
     }
     else cout << "Unable to open file";
     myfile.close();

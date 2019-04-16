@@ -28,6 +28,7 @@ class Scheduler
         std::queue<arrival> arrivals;
         std::queue<job> readyQ;
         void TimeStep();
+        int Event(std::string&);
     public :
         Scheduler(const std::string&, const int, const int);
         void ReadInput(const std::string&);
