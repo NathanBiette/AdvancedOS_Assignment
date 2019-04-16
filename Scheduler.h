@@ -22,11 +22,10 @@ class Scheduler
         //std::string filename;
         //arrival* arrivals;
         int time = 0;
-        int nextArrival = 0;
         job executingJob;
         int numProcesses;
         int numArrivals;
-        std::vector<arrival> arrivals;
+        std::queue<arrival> arrivals;
         std::queue<job> readyQ;
         void TimeStep();
     public :

@@ -8,11 +8,27 @@
 using namespace std;
 
 void Scheduler::TimeStep(){
-    int nextEventTime = (nextArrival < numArrivals) ?  
-        min(arrivals[nextArrival].arrivalTime, time + executingJob.remainingTime) : 
-        time + executingJob.remainingTime;
+    int nextEventTime = 0;
+    if(!arrivals.empty()){
+        if(executingJob.remainingTime > 0){
+            nextEventTime = min(time + executingJob.remainingTime, arrivals.front().arrivalTime);
+            cout<<"a"<<endl;
+        }else{
+            nextEventTime = arrivals.front().arrivalTime;
+            cout<<"b"<<endl;
+        }
+    }else{
+        if(executingJob.remainingTime > 0){
+            nextEventTime = time + executingJob.remainingTime;
+            cout<<"c"<<endl;
+        }else{
+            cout<< "error shouldn't be steping time here !"<<endl;
+            cout<<"d"<<endl;
+        }
+    }
     executingJob.remainingTime += (time - nextEventTime);
     time = nextEventTime;
+    cout<<"time is now "<<time<<endl;
 }
 
 Scheduler::Scheduler(const string &s, int numProcesses, int numArrivals): numProcesses(numProcesses), numArrivals(numArrivals){
@@ -23,15 +39,17 @@ void Scheduler::ReadInput(const string &filename){
     string line;
     ifstream myfile;
     myfile.open(filename);
-    arrivals.resize(numArrivals);
     if (myfile.is_open()){
         for (int i = 0; i < numArrivals; i++){
             getline(myfile,line);
             stringstream ss;
             ss << line;
-            ss >> arrivals[i].processId;
-            ss >> arrivals[i].arrivalTime;
-            ss >> arrivals[i].burst;
+            arrival newArrival = {0, 0, 0};
+            ss >> newArrival.processId;
+            ss >> newArrival.arrivalTime;
+            ss >> newArrival.burst;
+            arrivals.push(newArrival);
+            cout<<"reading arrival"<<endl;
         }
     }
     else cout << "Unable to open file"; 
@@ -40,10 +58,13 @@ void Scheduler::ReadInput(const string &filename){
 }
 
 void Scheduler::PrintInput(){
-    for(int i=0; i<arrivals.size(); ++i){
-        cout<<arrivals[i].processId<<" ";
-        cout<<arrivals[i].arrivalTime<<" ";
-        cout<<arrivals[i].burst<<endl;
+    cout<<"number of arrivals: "<<arrivals.size()<<endl;
+    for(int i=0; i<arrivals.size();i++){
+        cout<<arrivals.front().processId<<" ";
+        cout<<arrivals.front().arrivalTime<<" ";
+        cout<<arrivals.front().burst<<endl;
+        arrivals.push(arrivals.front());
+        arrivals.pop();
     }
     return;
 }
@@ -54,50 +75,25 @@ void Scheduler::Simulate(const string &filename){
     if (myfile.is_open() && arrivals.size() > 0){
 
         time = 0;
-        executingJob = {arrivals[0].processId, arrivals[0].burst};
+        cout<<"time is now "<<time<<endl;
+        executingJob = {arrivals.front().processId, arrivals.front().burst};
+        arrivals.pop();
         myfile << "(" << time << ", " << executingJob.processId << ")\n";
-        nextArrival = 1;
         Scheduler::TimeStep();
         // Iterate over the time steps
-        while(nextArrival < numArrivals || !readyQ.empty()){
+        while(!arrivals.empty() || !readyQ.empty()){
             
-            if(nextArrival < numArrivals){
-                if(arrivals[nextArrival].arrivalTime == time){
-                    job newJob = {arrivals[nextArrival].processId, arrivals[nextArrival].burst};
-                    readyQ.push(newJob);
-                    nextArrival++;
-                }
+            if(!arrivals.empty() && arrivals.front().arrivalTime == time){
+                job newJob = {arrivals.front().processId, arrivals.front().burst};
+                readyQ.push(newJob);
+                arrivals.pop();
             }
-            if(executingJob.remainingTime <= 0){
-                if(!readyQ.empty()){
-                    executingJob = readyQ.front();
-                    readyQ.pop();
-                    myfile << "(" << time << ", " << executingJob.processId << ")\n";
-                }
+            if(!readyQ.empty() && executingJob.remainingTime <= 0){
+                executingJob = readyQ.front();
+                readyQ.pop();
+                myfile << "(" << time << ", " << executingJob.processId << ")\n";
             }
             Scheduler::TimeStep();
-
-/*
-            if(arrivals[nextArrival].arrivalTime < time + executingJob.remainingTime){
-                time = arrivals[nextArrival].arrivalTime;
-                job newJob = {arrivals[nextArrival].processId, arrivals[nextArrival].burst};
-                readyQ.push(newJob);
-                nextArrival= (nextArrival < numArrivals - 1) ? nextArrival + 1 : nextArrival;
-            }else{
-                time += executingJob.remainingTime;
-                if(!readyQ.empty()){
-                    executingJob = readyQ.front();
-                    readyQ.pop();
-                    myfile << "(" << time << ", " << executingJob.processId << ")\n";
-                }
-                if(time == arrivals[nextArrival].arrivalTime){
-                    job newJob = {arrivals[nextArrival].processId, arrivals[nextArrival].burst};
-                    readyQ.push(newJob);
-                    nextArrival= (nextArrival < numArrivals - 1) ? nextArrival + 1 : nextArrival;
-                }
-            }
-
-*/
         }
     }
     else cout << "Unable to open file";
