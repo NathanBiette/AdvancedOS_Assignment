@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <queue>
 #include "Scheduler.h"
 using namespace std;
 
@@ -41,13 +42,32 @@ void Scheduler::PrintInput(){
 void Scheduler::Simulate(const string &filename){
     ofstream myfile;
     myfile.open(filename, ios::trunc | ios::out);
-    if (myfile.is_open()){
-        for(int i = 0; i < numArrivals; i++){
-        
+    if (myfile.is_open() && arrivals.size() > 0){
+
+        time = 0;
+        job executingJob = {arrivals[0].processId, arrivals[0].burst};
+        myfile << "(" << time << ", " << executingJob.processId << ")\n";
+        int nextArrival = 1;
+        // Iterate over the time steps 
+        while(nextArrival < numArrivals || !readyQ.empty()){
+            if(arrivals[nextArrival].arrivalTime < time + executingJob.remainingTime){
+                time = arrivals[nextArrival].arrivalTime;
+                job newJob = {arrivals[nextArrival].processId, arrivals[nextArrival].burst};
+                readyQ.push(newJob);
+                nextArrival++;
+            }else{
+                time += executingJob.remainingTime;
+                if(!readyQ.empty()){
+                    executingJob = readyQ.pop();
+                    myfile << "(" << time << ", " << executingJob.processId << ")\n";
+                }
+                if(time == arrivals[nextArrival].arrivalTime){
+                    job newJob = {arrivals[nextArrival].processId, arrivals[nextArrival].burst};
+                    readyQ.push(newJob);
+                    nextArrival++;
+                }
+            }
         }
-        myfile << "This is a line.\n";
-        myfile << "This is NOT line.\n";
-        myfile.close();
     }
     else cout << "Unable to open file";
     myfile.close();
