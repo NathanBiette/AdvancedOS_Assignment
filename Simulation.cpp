@@ -10,5 +10,8 @@ int main()
     Scheduler scheduler(mystr, 5);
     scheduler.PrintInput();
     scheduler.Simulate("test.txt");
+    RoundRobin roundRobin(mystr, 5, 5);
+    roundRobin.PrintInput();
+    roundRobin.Simulate("test2.txt");
     return 0;
 }

@@ -14,7 +14,7 @@ struct job {
 
 class Scheduler
 {
-    private :
+    protected :
         int time = 0;
         int totalWaitingTime = 0;
         job executingJob;
@@ -30,4 +30,15 @@ class Scheduler
         void Simulate(const std::string&);
 };
  
+
+class RoundRobin : public Scheduler {
+    private:
+        int Q;
+        int remainingQTime;
+        void TimeStep();
+        int Event(std::string&);
+    public:
+        RoundRobin(const std::string&, const int, const int);
+        void Simulate(const std::string&);
+};
 #endif
