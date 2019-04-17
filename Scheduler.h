@@ -5,32 +5,26 @@
 #include <vector>
 #include <queue>
 
-struct arrival {
+struct job {
   int processId;
   int arrivalTime;
   int burst;
-};
-
-struct job {
-  int processId;
-  int remainingTime;
+  bool startedExecution = false;
 };
 
 class Scheduler
 {
     private :
-        //std::string filename;
-        //arrival* arrivals;
         int time = 0;
+        int totalWaitingTime = 0;
         job executingJob;
-        int numProcesses;
-        int numArrivals;
-        std::queue<arrival> arrivals;
+        int numJobs;
+        std::queue<job> arrivals;
         std::queue<job> readyQ;
         void TimeStep();
         int Event(std::string&);
     public :
-        Scheduler(const std::string&, const int, const int);
+        Scheduler(const std::string&, const int);
         void ReadInput(const std::string&);
         void PrintInput();
         void Simulate(const std::string&);
