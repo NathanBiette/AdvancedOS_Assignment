@@ -7,7 +7,6 @@ using namespace std;
 
 int main()
 {
-    //cout << "Hello, World!" << endl;
     Scheduler scheduler(mystr, 5, 5);
     scheduler.PrintInput();
     scheduler.Simulate("test.txt");
