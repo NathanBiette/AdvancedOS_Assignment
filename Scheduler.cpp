@@ -10,46 +10,43 @@ using namespace std;
 void Scheduler::TimeStep(){
     int nextEventTime = 0;
     if(!arrivals.empty()){
-        if(executingJob.remainingTime > 0){
-            nextEventTime = min(time + executingJob.remainingTime, arrivals.front().arrivalTime);
-            cout<<"a"<<endl;
+        if(executingJob.burst > 0){
+            nextEventTime = min(time + executingJob.burst, arrivals.front().arrivalTime);
         }else{
             nextEventTime = arrivals.front().arrivalTime;
-            cout<<"b"<<endl;
         }
     }else{
-        if(executingJob.remainingTime > 0){
-            nextEventTime = time + executingJob.remainingTime;
-            cout<<"c"<<endl;
+        if(executingJob.burst > 0){
+            nextEventTime = time + executingJob.burst;
         }else{
             cout<< "error shouldn't be steping time here !"<<endl;
-            cout<<"d"<<endl;
         }
     }
-    executingJob.remainingTime += (time - nextEventTime);
+    executingJob.burst += (time - nextEventTime);
     time = nextEventTime;
     cout<<"time is now "<<time<<endl;
 }
 
 int Scheduler::Event(string& str){
         if(!arrivals.empty() && arrivals.front().arrivalTime == time){
-            job newJob = {arrivals.front().processId, arrivals.front().burst};
-            readyQ.push(newJob);
+            readyQ.push(arrivals.front());
             arrivals.pop();
         }
-        if(!readyQ.empty() && executingJob.remainingTime <= 0){
+        if(!readyQ.empty() && executingJob.burst <= 0){
             executingJob = readyQ.front();
+            if(!executingJob.startedExecution){
+                totalWaitingTime += time - executingJob.arrivalTime;
+            }
             readyQ.pop();
             stringstream ss;
             ss << "(" << time << ", " << executingJob.processId << ")\n";
             str = ss.str();
             return 1;
-            //myfile << "(" << time << ", " << executingJob.processId << ")\n";
         }
         return 0;
 }
 
-Scheduler::Scheduler(const string& s, int numProcesses, int numArrivals): numProcesses(numProcesses), numArrivals(numArrivals){
+Scheduler::Scheduler(const string& s, int numJobs): numJobs(numJobs){
     ReadInput(s);
 }
 
@@ -58,11 +55,11 @@ void Scheduler::ReadInput(const string& filename){
     ifstream myfile;
     myfile.open(filename);
     if (myfile.is_open()){
-        for (int i = 0; i < numArrivals; i++){
+        for (int i = 0; i < numJobs; i++){
             getline(myfile,line);
             stringstream ss;
             ss << line;
-            arrival newArrival = {0, 0, 0};
+            job newArrival = {0, 0, 0, false};
             ss >> newArrival.processId;
             ss >> newArrival.arrivalTime;
             ss >> newArrival.burst;
@@ -102,5 +99,6 @@ void Scheduler::Simulate(const string &filename){
         }while(!arrivals.empty() || !readyQ.empty());
     }
     else cout << "Unable to open file";
+    myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
     myfile.close();
 }
