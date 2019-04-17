@@ -8,6 +8,7 @@
 struct job {
   int processId;
   int arrivalTime;
+  int lastExecutionTime;
   int burst;
   bool startedExecution = false;
 };
@@ -27,18 +28,6 @@ class Scheduler
         Scheduler(const std::string&, const int);
         void ReadInput(const std::string&);
         void PrintInput();
-        void Simulate(const std::string&);
-};
- 
-
-class RoundRobin : public Scheduler {
-    private:
-        int Q;
-        int remainingQTime;
-        void TimeStep();
-        int Event(std::string&);
-    public:
-        RoundRobin(const std::string&, const int, const int);
         void Simulate(const std::string&);
 };
 #endif

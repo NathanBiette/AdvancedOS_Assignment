@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Scheduler.h"
+#include "RoundRobin.h"
 using namespace std;
 
  const string mystr = "data.txt";
