@@ -6,14 +6,14 @@
 #include <list>
 #include "Scheduler.h"
 
-class SRTF : public Scheduler {
+class Srtf : public Scheduler {
     private:
         std::list<job> readyQ;
+        bool Compare(const job&, const job&);
         void TimeStep();
         int Event(std::string&);
-        bool Compare(const job& lhs, const job& rhs)
     public:
-        SRTF(const std::string&, const int);
+        Srtf(const std::string&, const int);
         void Simulate(const std::string&);
 };
 #endif

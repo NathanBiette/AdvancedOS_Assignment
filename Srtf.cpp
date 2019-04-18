@@ -5,14 +5,14 @@
 #include <queue>
 #include <list>
 #include <algorithm>
-#include "SRTF.h"
+#include "Srtf.h"
 using namespace std;
 
-SRTF::SRTF(const string& s, int numJobs): Scheduler(s, numJobs){
+Srtf::Srtf(const string& s, int numJobs): Scheduler(s, numJobs){
     ReadInput(s);
 }
 
-void SRTF::TimeStep(){
+void Srtf::TimeStep(){
     int nextEventTime = 0;
     if(!arrivals.empty()){
         if(executingJob.burst > 0){
@@ -32,7 +32,7 @@ void SRTF::TimeStep(){
     cout<<"time is now "<<time<<endl;
 }
 
-int SRTF::Event(string& str){
+int Srtf::Event(string& str){
         if(!arrivals.empty() && arrivals.front().arrivalTime == time){
             readyQ.push_back(arrivals.front());
             readyQ.sort(Compare);
@@ -42,7 +42,7 @@ int SRTF::Event(string& str){
             executingJob.lastExecutionTime = time;
             if(readyQ.front().burst < executingJob.burst){
                 readyQ.push_back(executingJob);
-                readyQ.sort(SRTF::Compare);
+                readyQ.sort(Srtf::Compare);
             }
             executingJob = readyQ.front();
             totalWaitingTime += time - executingJob.lastExecutionTime;
@@ -56,7 +56,7 @@ int SRTF::Event(string& str){
         return 0;
 }
 
-void SRTF::Simulate(const string &filename){
+void Srtf::Simulate(const string &filename){
     ofstream myfile;
     myfile.open(filename, ios::trunc | ios::out);
     if (myfile.is_open() && arrivals.size() > 0){
@@ -64,10 +64,10 @@ void SRTF::Simulate(const string &filename){
         // Iterate over the time steps
         do{
             string str;
-            if(SRTF::Event(str)){
+            if(Srtf::Event(str)){
                 myfile << str;
             }
-            SRTF::TimeStep();
+            Srtf::TimeStep();
         }while(!arrivals.empty() || !readyQ.empty());
     }
     else cout << "Unable to open file";
@@ -75,7 +75,7 @@ void SRTF::Simulate(const string &filename){
     myfile.close();
 }
 
-bool SRTF::Compare(const job& lhs, const job& rhs){
+bool Srtf::Compare(const job& lhs, const job& rhs){
 	return lhs.burst < rhs.burst;
 }
 
