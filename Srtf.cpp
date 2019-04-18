@@ -9,7 +9,6 @@
 using namespace std;
 
 Srtf::Srtf(const string& s, int numJobs): Scheduler(s, numJobs){
-    ReadInput(s);
 }
 
 void Srtf::TimeStep(){
@@ -32,26 +31,34 @@ void Srtf::TimeStep(){
     cout<<"time is now "<<time<<endl;
 }
 
+bool Compare(const job& lhs, const job& rhs){
+	return lhs.burst < rhs.burst;
+}
+
 int Srtf::Event(string& str){
+        cout<<"size of readyQ "<<readyQ.size()<<endl;
+        cout<<"size of arrivals "<<arrivals.size()<<endl;
         if(!arrivals.empty() && arrivals.front().arrivalTime == time){
             readyQ.push_back(arrivals.front());
             readyQ.sort(Compare);
             arrivals.pop();
         }
-        if(!readyQ.empty() && (readyQ.front().burst < executingJob.burst || executingJob.burst <= 0)){
-            executingJob.lastExecutionTime = time;
-            if(readyQ.front().burst < executingJob.burst){
-                readyQ.push_back(executingJob);
-                readyQ.sort(Srtf::Compare);
+        if(!readyQ.empty()){
+            if(readyQ.front().burst < executingJob.burst || executingJob.burst <= 0){
+                executingJob.lastExecutionTime = time;
+                if(executingJob.burst > 0){
+                    readyQ.push_back(executingJob);
+                    readyQ.sort(Compare);
+                }
+                executingJob = readyQ.front();
+                cout<<executingJob.processId<<endl;
+                totalWaitingTime += time - executingJob.lastExecutionTime;
+                readyQ.pop_front();
+                stringstream ss;
+                ss << "(" << time << ", " << executingJob.processId << ")\n";
+                str = ss.str();
+                return 1;
             }
-            executingJob = readyQ.front();
-            totalWaitingTime += time - executingJob.lastExecutionTime;
-            readyQ.pop_front();
-            stringstream ss;
-            ss << "(" << time << ", " << executingJob.processId << ")\n";
-            str = ss.str();
-            return 1;
-            
         }
         return 0;
 }
@@ -69,13 +76,10 @@ void Srtf::Simulate(const string &filename){
             }
             Srtf::TimeStep();
         }while(!arrivals.empty() || !readyQ.empty());
+        myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
     }
     else cout << "Unable to open file";
-    myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
+    
     myfile.close();
-}
-
-bool Srtf::Compare(const job& lhs, const job& rhs){
-	return lhs.burst < rhs.burst;
 }
 

@@ -6,10 +6,10 @@
 #include <queue>
 
 struct job {
-  int processId;
-  int arrivalTime;
-  int lastExecutionTime;
-  int burst;
+  int processId = 0;
+  int arrivalTime = 0;
+  int lastExecutionTime = 0;
+  int burst = 0;
   bool startedExecution = false;
 };
 
