@@ -9,7 +9,6 @@
 class Srtf : public Scheduler {
     private:
         std::list<job> readyList;
-        //bool Compare(const job&, const job&);
         void TimeStep();
         int Event(std::string&);
     public:
