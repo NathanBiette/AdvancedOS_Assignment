@@ -14,6 +14,5 @@ class RoundRobin : public Scheduler {
         int Event(std::string&);
     public:
         RoundRobin(const std::string&, const int, const int);
-        void Simulate(const std::string&);
 };
 #endif

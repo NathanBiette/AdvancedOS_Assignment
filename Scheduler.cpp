@@ -66,7 +66,6 @@ void Scheduler::ReadInput(const string& filename){
             ss >> newArrival.burst;
             newArrival.lastExecutionTime = newArrival.arrivalTime;
             arrivals.push(newArrival);
-            cout<<"reading arrival"<<endl;
         }
     }
     else cout << "Unable to open file"; 
@@ -75,6 +74,7 @@ void Scheduler::ReadInput(const string& filename){
 }
 
 void Scheduler::PrintInput(){
+    cout<<"input data :"<<endl;
     cout<<"number of arrivals: "<<arrivals.size()<<endl;
     for(int i=0; i<arrivals.size();i++){
         cout<<arrivals.front().processId<<" ";
@@ -92,12 +92,20 @@ void Scheduler::Simulate(const string &filename){
     if (myfile.is_open() && arrivals.size() > 0){
         time = 0;
         // Iterate over the time steps
+        cout<<"starting simulation"<<endl;
+        int iterCount = 0;
         do{
+            cout<<"-- new iteration: "<<iterCount<<" --"<<endl;
+            if(iterCount > 200){
+                cout<<"Too many iteration ! Process probably stuck"<<endl;
+                return;
+            }
             string str;
-            if(Event(str)){
+            if(this->Event(str)){
                 myfile << str;
             }
-            TimeStep();
+            this->TimeStep();
+            iterCount++;
         }while(!arrivals.empty() || !readyQ.empty());
     }
     else cout << "Unable to open file";

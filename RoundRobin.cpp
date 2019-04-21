@@ -69,22 +69,3 @@ int RoundRobin::Event(string& str){
         return 0;
 }
 
-void RoundRobin::Simulate(const string &filename){
-    ofstream myfile;
-    myfile.open(filename, ios::trunc | ios::out);
-    if (myfile.is_open() && arrivals.size() > 0){
-        time = 0;
-        // Iterate over the time steps
-        do{
-            string str;
-            if(RoundRobin::Event(str)){
-                myfile << str;
-            }
-            RoundRobin::TimeStep();
-        }while(!arrivals.empty() || !readyQ.empty());
-    }
-    else cout << "Unable to open file";
-    myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
-    myfile.close();
-}
-

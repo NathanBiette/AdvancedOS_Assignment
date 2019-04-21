@@ -63,23 +63,3 @@ int Srtf::Event(string& str){
         return 0;
 }
 
-void Srtf::Simulate(const string &filename){
-    ofstream myfile;
-    myfile.open(filename, ios::trunc | ios::out);
-    if (myfile.is_open() && arrivals.size() > 0){
-        time = 0;
-        // Iterate over the time steps
-        do{
-            string str;
-            if(Srtf::Event(str)){
-                myfile << str;
-            }
-            Srtf::TimeStep();
-        }while(!arrivals.empty() || !readyQ.empty());
-        myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
-    }
-    else cout << "Unable to open file";
-    
-    myfile.close();
-}
-

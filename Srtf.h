@@ -14,6 +14,5 @@ class Srtf : public Scheduler {
         int Event(std::string&);
     public:
         Srtf(const std::string&, const int);
-        void Simulate(const std::string&);
 };
 #endif
