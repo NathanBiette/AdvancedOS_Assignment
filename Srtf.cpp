@@ -31,7 +31,7 @@ void Srtf::TimeStep(){
     cout<<"time is now "<<time<<endl;
 }
 
-bool Compare(const job& lhs, const job& rhs){
+bool Srtf::Compare(const job& lhs, const job& rhs){
 	return lhs.burst < rhs.burst;
 }
 

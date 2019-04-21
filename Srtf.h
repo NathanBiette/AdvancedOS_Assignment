@@ -11,6 +11,7 @@ class Srtf : public Scheduler {
         std::list<job> readyList;
         void TimeStep();
         int Event(std::string&);
+        static bool Compare(const job&, const job& );
     public:
         Srtf(const std::string&, const int);
         bool IsReadyQEmpty(){return readyList.empty();};
