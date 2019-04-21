@@ -14,7 +14,7 @@ struct job {
 };
 
 class Scheduler
-{
+{  
     protected :
         int time = 0;
         int totalWaitingTime = 0;
@@ -22,6 +22,7 @@ class Scheduler
         int numJobs;
         std::queue<job> arrivals;
         std::queue<job> readyQ;
+        virtual bool IsReadyQEmpty(){return readyQ.empty();};
         virtual void TimeStep();
         virtual int Event(std::string&);
     public :

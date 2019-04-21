@@ -106,7 +106,7 @@ void Scheduler::Simulate(const string &filename){
             }
             this->TimeStep();
             iterCount++;
-        }while(!arrivals.empty() || !readyQ.empty());
+        }while(!arrivals.empty() || !this->IsReadyQEmpty());
     }
     else cout << "Unable to open file";
     myfile << "average waiting time " << (float)totalWaitingTime / (float)numJobs<<endl;
