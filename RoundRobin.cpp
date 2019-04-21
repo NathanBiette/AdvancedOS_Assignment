@@ -15,13 +15,25 @@ void RoundRobin::TimeStep(){
     int nextEventTime = 0;
     if(!arrivals.empty()){
         if(executingJob.burst > 0){
-            nextEventTime = min(min(time + executingJob.burst, arrivals.front().arrivalTime), time + remainingQTime);
+            if(remainingQTime > 0){
+                nextEventTime = min(min(time + executingJob.burst, arrivals.front().arrivalTime), time + remainingQTime);
+            }else{
+                nextEventTime = min(time + executingJob.burst, arrivals.front().arrivalTime);
+            }
         }else{
-            nextEventTime = min(arrivals.front().arrivalTime, time + remainingQTime);
+            if(remainingQTime > 0){
+                nextEventTime = min(arrivals.front().arrivalTime, time + remainingQTime);
+            }else{
+                nextEventTime = arrivals.front().arrivalTime;
+            }
         }
     }else{
         if(executingJob.burst > 0){
-            nextEventTime = min(time + executingJob.burst, time + remainingQTime);
+            if(remainingQTime > 0){
+                nextEventTime = min(time + executingJob.burst, time + remainingQTime);
+            }else{
+                nextEventTime = time + executingJob.burst;
+            }
         }else{
             cout<< "error shouldn't be steping time here !"<<endl;
         }
