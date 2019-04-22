@@ -34,14 +34,8 @@ void Sjf::TimeStep(){
     cout<<"time is now "<<time<<endl;
 }
 
-bool Sjf::Compare(const job& lhs, const job& rhs){
-    previousJobLength lPrevJob = previousBurst[lhs.processId];
-    previousJobLength rPrevJob = previousBurst[rhs.processId];
-
-    float lhsPrediction = lPrevJob.predictionAvailable ? (1.0f - alpha) * lPrevJob.predictedValue + alpha * lPrevJob.ActualValue: lPrevJob.predictedValue;
-    float rhsPrediction = rPrevJob.predictionAvailable ? (1.0f - alpha) * rPrevJob.predictedValue + alpha * rPrevJob.ActualValue: rPrevJob.predictedValue;
-
-	return lPrevJob.predictedValue < rPrevJob.predictedValue;
+bool Sjf::Compare(const job2& lhs, const job2& rhs){
+	return lhs.predictedValue < rhs.predictedValue;
 }
 
 int Sjf::Event(string& str){
@@ -49,12 +43,21 @@ int Sjf::Event(string& str){
         cout<<"size of arrivals was "<<arrivals.size()<<endl;
         cout<<"current job was "<<executingJob.processId<<" arrived at "<<executingJob.arrivalTime<<" with remaining time of "<<executingJob.burst<<endl;
         if(!arrivals.empty() && arrivals.front().arrivalTime == time){
-            readyList.push_back(arrivals.front());
 
             previousJobLength prevJob = previousBurst[arrivals.front().processId];
-            prevJob.predictedValue = prevJob.predictionAvailable ? (1.0f - alpha) * prevJob.predictedValue + alpha * prevJob.ActualValue: prevJob.predictedValue
+            prevJob.predictedValue = prevJob.predictionAvailable ? (1.0f - alpha) * prevJob.predictedValue + alpha * prevJob.actualValue: prevJob.predictedValue;
             prevJob.actualValue = arrivals.front().burst;
             prevJob.predictionAvailable = true;
+
+            //arrivals.front().predictedValue = prevJob.predictedValue;
+
+            readyList.push_back(job2{
+                arrivals.front().processId,
+                arrivals.front().arrivalTime,
+                arrivals.front().lastExecutionTime,
+                arrivals.front().burst,
+                false,
+                prevJob.predictedValue});
             readyList.sort(Compare);
             arrivals.pop();
         }
