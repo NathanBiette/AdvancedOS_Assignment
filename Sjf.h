@@ -10,7 +10,6 @@
 struct previousJobLength{
     float predictedValue;
     float actualValue;
-    bool predictionAvailable;
 };
 
 struct job2 {

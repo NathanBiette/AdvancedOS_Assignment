@@ -37,6 +37,12 @@ void CountLines(const string& filename, int& count, int& numProc){
 
 int main()
 {
+    int Q;
+    cout<<"Q ?"<<endl;
+    cin>>Q;
+    float alpha;
+    cout<<"alpha ?"<<endl;
+    cin>>alpha;
     int numLines;
     int numProc;
     CountLines(mystr, numLines, numProc);
@@ -46,18 +52,18 @@ int main()
     cout<< ">>>>>>>>>>Simulating FCFS no premption<<<<<<<<<<<"<<endl;
     Scheduler * scheduler = new Scheduler(mystr, numLines);
     scheduler->PrintInput();
-    scheduler->Simulate("test.txt");
+    scheduler->Simulate("FCFS.txt");
     cout<< ">>>>>>>>>>Simulating RoundRobin<<<<<<<<<<<<<<<<<<"<<endl;
-    Scheduler * roundRobin = new RoundRobin(mystr, numLines, 5);
+    Scheduler * roundRobin = new RoundRobin(mystr, numLines, Q);
     roundRobin->PrintInput();
-    roundRobin->Simulate("test2.txt");
+    roundRobin->Simulate("RR.txt");
     cout<< ">>>>>>>>>>Simulating SRTF with premption<<<<<<<<<"<<endl;
     Scheduler * srtf = new Srtf(mystr, numLines);
     srtf->PrintInput();
-    srtf->Simulate("test3.txt");
+    srtf->Simulate("SRTF.txt");
     cout<< ">>>>>>>>>>Simulating SJF with premption<<<<<<<<<"<<endl;
-    Scheduler * sjf = new Sjf(mystr, numLines, 0.5f, 5, numProc);
+    Scheduler * sjf = new Sjf(mystr, numLines, alpha, 5, numProc);
     sjf->PrintInput();
-    sjf->Simulate("test4.txt");
+    sjf->Simulate("SJF.txt");
     return 0;
 }

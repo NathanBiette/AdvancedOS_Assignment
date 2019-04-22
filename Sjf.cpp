@@ -8,7 +8,7 @@
 #include "Sjf.h"
 using namespace std;
 
-Sjf::Sjf(const string& s, const int numJobs, const float alpha, const int initialGuess, const int numProcesses): Scheduler(s, numJobs), alpha(alpha), previousBurst(numJobs, previousJobLength {(float)initialGuess, 0.0f, false}){
+Sjf::Sjf(const string& s, const int numJobs, const float alpha, const int initialGuess, const int numProcesses): Scheduler(s, numJobs), alpha(alpha), previousBurst(numJobs, previousJobLength {(float)initialGuess, (float)initialGuess}){
     cout<<"test "<<endl;
     cout<<previousBurst[0].predictedValue<<endl;
     cout<<previousBurst[0].actualValue<<endl;
@@ -44,10 +44,10 @@ int Sjf::Event(string& str){
         cout<<"current job was "<<executingJob.processId<<" arrived at "<<executingJob.arrivalTime<<" with remaining time of "<<executingJob.burst<<endl;
         if(!arrivals.empty() && arrivals.front().arrivalTime == time){
 
-            previousJobLength prevJob = previousBurst[arrivals.front().processId];
-            prevJob.predictedValue = prevJob.predictionAvailable ? (1.0f - alpha) * prevJob.predictedValue + alpha * prevJob.actualValue: prevJob.predictedValue;
-            prevJob.actualValue = arrivals.front().burst;
-            prevJob.predictionAvailable = true;
+            //previousJobLength prevJob = previousBurst[arrivals.front().processId];
+            previousBurst[arrivals.front().processId].predictedValue = (1.0f - alpha) * previousBurst[arrivals.front().processId].predictedValue + alpha * previousBurst[arrivals.front().processId].actualValue;
+            cout<<"Value predicted for job "<<arrivals.front().processId<<" = "<<previousBurst[arrivals.front().processId].predictedValue<<endl;
+            previousBurst[arrivals.front().processId].actualValue = arrivals.front().burst;
 
             //arrivals.front().predictedValue = prevJob.predictedValue;
 
@@ -57,7 +57,7 @@ int Sjf::Event(string& str){
                 arrivals.front().lastExecutionTime,
                 arrivals.front().burst,
                 false,
-                prevJob.predictedValue});
+                previousBurst[arrivals.front().processId].predictedValue});
             readyList.sort(Compare);
             arrivals.pop();
         }
@@ -74,7 +74,5 @@ int Sjf::Event(string& str){
                 return 1;
             }
         }
-        cout<<"size of readyList is now "<<readyList.size()<<endl;
-        cout<<"size of arrivals is now "<<arrivals.size()<<endl;
         return 0;
 }
