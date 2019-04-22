@@ -57,5 +57,7 @@ int main()
     srtf->Simulate("test3.txt");
     cout<< ">>>>>>>>>>Simulating SJF with premption<<<<<<<<<"<<endl;
     Scheduler * sjf = new Sjf(mystr, numLines, 0.5f, 5, numProc);
+    sjf->PrintInput();
+    sjf->Simulate("test4.txt");
     return 0;
 }
